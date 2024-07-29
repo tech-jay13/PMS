@@ -3,6 +3,8 @@ import swaggerUi from "swagger-ui-express";
 import swaggerJsDoc from "swagger-jsdoc";
 import connectDB from "./config/database";
 import productRoutes from "./routes/productRoutes";
+import fs from "fs";
+import path from "path";
 
 const app = express();
 const port = 3000;
@@ -15,21 +17,21 @@ const swaggerOptions = {
   swaggerDefinition: {
     openapi: "3.0.0",
     info: {
-      title: "My API",
+      title: "PMS",
       version: "1.0.0",
-      description: "A simple Express API",
+      description: "A product management service API",
     },
     servers: [
       {
-        url: `http://localhost:${port}`,
+        url: process.env.HOSTED_URL ?? `http://localhost:${port}`,
       },
     ],
   },
-  apis: ["./src/routes/*.ts"], // Path to the API docs
+  apis: [path.join(__dirname, "../swagger/swagger.yaml")],
 };
 
 const swaggerDocs = swaggerJsDoc(swaggerOptions);
-app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocs));
+app.use("/api", swaggerUi.serve, swaggerUi.setup(swaggerDocs));
 
 // Routes
 app.use("/products", productRoutes);

@@ -1,0 +1,187 @@
+openapi: 3.0.0
+info:
+  title: Product API
+  version: 1.0.0
+  description: A simple API for managing products
+
+servers:
+  - url: https://pms-4hqm.onrender.com/
+    description: Dev server
+
+paths:
+  /products:
+    get:
+      summary: List all products with optional filters
+      tags:
+        - Products
+      parameters:
+        - in: query
+          name: category
+          schema:
+            type: string
+          required: false
+          description: The product category
+        - in: query
+          name: price
+          schema:
+            type: number
+          required: false
+          description: The product price
+        - in: query
+          name: page
+          schema:
+            type: integer
+            default: 1
+          required: false
+          description: Page number for pagination
+        - in: query
+          name: limit
+          schema:
+            type: integer
+            default: 10
+          required: false
+          description: Number of products per page
+      responses:
+        '200':
+          description: A list of products
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Product'
+        '400':
+          description: Bad request
+
+    post:
+      summary: Add a new product
+      tags:
+        - Products
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Product'
+      responses:
+        '201':
+          description: Product successfully created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Product'
+        '400':
+          description: Bad request
+
+  /products/{id}:
+    get:
+      summary: Retrieve a product by its ID
+      tags:
+        - Products
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: string
+          required: true
+          description: The product ID
+      responses:
+        '200':
+          description: Product details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Product'
+        '404':
+          description: Product not found
+        '400':
+          description: Bad request
+
+    put:
+      summary: Update an existing product
+      tags:
+        - Products
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: string
+          required: true
+          description: The product ID
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Product'
+      responses:
+        '200':
+          description: Product successfully updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Product'
+        '404':
+          description: Product not found
+        '400':
+          description: Bad request
+
+    delete:
+      summary: Delete a product
+      tags:
+        - Products
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: string
+          required: true
+          description: The product ID
+      responses:
+        '200':
+          description: Product successfully deleted
+        '404':
+          description: Product not found
+        '400':
+          description: Bad request
+
+components:
+  schemas:
+    Product:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Unique identifier for the product
+        productName:
+          type: string
+          description: Name of the product
+        productDescription:
+          type: string
+          description: Description of the product
+        price:
+          type: number
+          format: float
+          description: Price of the product
+        category:
+          type: string
+          description: Category of the product
+        stockQuantity:
+          type: integer
+          description: Quantity of the product in stock
+        createdAt:
+          type: string
+          format: date-time
+          description: Timestamp when the product was created
+        updatedAt:
+          type: string
+          format: date-time
+          description: Timestamp when the product was last updated
+      required:
+        - id
+        - productName
+        - price
+        - category
+        - stockQuantity
+        - createdAt
+        - updatedAt
